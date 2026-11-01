@@ -37,7 +37,7 @@ import kotlin.math.sin
  * Pixels are ARGB ints as `Bitmap.getPixels` gives them, so all of this runs
  * on the JVM in tests.
  */
-internal object PaddleOcrPipeline {
+object PaddleOcrPipeline {
 
     const val DET_SIDE = 640
     const val REC_HEIGHT = 48

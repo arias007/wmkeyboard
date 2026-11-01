@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WM Keyboard</string>
+    <string name="app_name">WM Keyboard (官方)</string>
     <!-- The launcher label when About › Short app name is on (#140). A name,
          not a word, so no language translates it. -->
     <string name="app_name_short" translatable="false">WMK</string>
