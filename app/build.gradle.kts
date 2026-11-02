@@ -269,7 +269,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.wasimaster.wmkeyboard"
+        applicationId = "com.wasimaster.wmkeyboard.side"
         minSdk = 24
         targetSdk = 36
         // Both from gradle.properties so :core:config stamps the same numbers on
