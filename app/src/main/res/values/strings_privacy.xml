@@ -343,4 +343,16 @@
     <!-- Caption at the end of the Permissions screen. -->
     <string name="privacy_permissions_footer_info">Android gives the permissions in the last group to every app at the install. An app cannot ask for them, and cannot give them back. You can take every other permission back at any time in the system settings. The feature that uses it then stops, and the rest of the keyboard keeps working.</string>
 
+    <!-- The typing history (#1073): a local record of what was committed to the field. -->
+    <string name="privacy_typing_history_group">Typing history</string>
+    <string name="privacy_typing_history_title">Keep what you type</string>
+    <string name="privacy_typing_history_subtitle_off">Off. Nothing you type is written down.</string>
+    <string name="privacy_typing_history_subtitle_on">On. Every word and phrase you commit is saved on this phone.</string>
+    <string name="privacy_typing_history_info">A local record of the text you type, written word by word as you commit it: a space, a pick, Enter. It stays on this phone, it is never sent anywhere, and it does not sync. It travels only in a backup you export yourself, so the file is yours to keep.</string>
+    <string name="privacy_typing_history_confirm_title">Keep what you type?</string>
+    <string name="privacy_typing_history_confirm_body">The text you commit will be saved in this app\'s storage until it expires (a week by default), and carried in any backup you export.
+
+Never recorded: a field that declares itself a password, a field that turns suggestions off, and incognito.
+
+What cannot be promised: a field that does not declare itself a password cannot be recognised. A login box drawn by the app rather than by Android looks like an ordinary field, and its contents would be saved like any other.</string>
 </resources>

@@ -146,13 +146,24 @@ object ConfigBackup {
          * [AI_MEMORY] for the reason given on [VOCAB].
          */
         TODO("todo"),
+
+        /**
+         * What was typed, committed text only (#1073). The most personal file
+         * the keyboard can hold, and the one thing here that nothing rebuilds:
+         * a new phone starts with an empty history and every word of it is
+         * gone. Not in sync — the same reason [AI_MEMORY] gives, at least as
+         * strongly — and off until the user asks for it.
+         *
+         * Appended after [TODO] for the reason given on [VOCAB].
+         */
+        TYPING_HISTORY("typing_history"),
         ;
 
         /**
          * Whether sync may carry this section between devices. Everything but
          * [AI_MEMORY], which goes into a backup or nowhere.
          */
-        val syncable: Boolean get() = this != AI_MEMORY
+        val syncable: Boolean get() = this != AI_MEMORY && this != TYPING_HISTORY
     }
 
     private val json = Json { prettyPrint = true }

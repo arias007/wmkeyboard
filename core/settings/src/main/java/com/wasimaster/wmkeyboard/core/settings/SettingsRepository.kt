@@ -18801,6 +18801,12 @@ class SettingsRepository(private val context: Context) {
         if (ConfigBackup.Section.SWIPE in sections) {
             swipeSection()?.let { out[ConfigBackup.Section.SWIPE] = it }
         }
+        if (ConfigBackup.Section.TYPING_HISTORY in sections) {
+            // The store file as it is: a switch and a list, nothing to
+            // re-encode (#1073). Absent until the user turns the record on.
+            readStore(com.wasimaster.wmkeyboard.core.history.TypingHistoryStore.FILE_PATH)
+                ?.let { out[ConfigBackup.Section.TYPING_HISTORY] = it }
+        }
         if (ConfigBackup.Section.NOTES in sections) {
             // Locked notes travel only with the secrets: the same switch, for
             // the same reason — this file is easy to send somewhere.
@@ -18863,6 +18869,9 @@ class SettingsRepository(private val context: Context) {
                     ConfigBackup.Section.AI_MEMORY -> element.jsonObject["memories"]?.jsonArray?.size ?: 0
                     // Tasks and their steps alike.
                     ConfigBackup.Section.TODO -> element.jsonObject["tasks"]?.jsonArray?.size ?: 0
+                    // Committed strings, which is what a user would call "what I typed".
+                    ConfigBackup.Section.TYPING_HISTORY ->
+                        element.jsonObject["entries"]?.jsonArray?.size ?: 0
                 }
             }.getOrDefault(0)
             counts[section] = count
@@ -18952,6 +18961,11 @@ class SettingsRepository(private val context: Context) {
                 if (taps != null) writeStore(TAP_MODEL_FILE, taps)
                 restored.add(ConfigBackup.Section.DICTIONARY)
                 bumpLexiconVersion()
+            }
+        }
+        (parsed.sections[ConfigBackup.Section.TYPING_HISTORY] as? JsonObject)?.let { obj ->
+            if (writeStore(com.wasimaster.wmkeyboard.core.history.TypingHistoryStore.FILE_PATH, obj)) {
+                restored.add(ConfigBackup.Section.TYPING_HISTORY)
             }
         }
         (parsed.sections[ConfigBackup.Section.CLIPBOARD] as? JsonObject)?.let { obj ->

@@ -20555,6 +20555,7 @@ open class WMKeyboardService : InputMethodService() {
         val written = piece ?: if (index >= 0) composer.committedText(buf, index, chosen) else chosen
         if (index >= 0 && piece == null && learningAllowed) composer.learnChoice(buf, index)
         ic.commitText(written, 1)
+        noteTypedHistory(written)
         // The rest of a reading kept on the strip now sits after the pick: read
         // again by the [updateComposingText] below (#973).
         hiddenReadingCaret = -1
@@ -21635,6 +21636,26 @@ open class WMKeyboardService : InputMethodService() {
      * that comes back wrong for as long as the vote holds.
      */
     @Suppress("LongParameterList")
+    /**
+     * Writes what just landed in the field to the phone's own record (#1073).
+     *
+     * The gate is the same three conditions every other learner uses, and it
+     * is best effort by nature: a field that declares itself a password is
+     * never recorded, and a field that does not cannot be recognised. Nothing
+     * here leaves the phone, and nothing here is in sync.
+     */
+    private fun noteTypedHistory(text: String) {
+        val state = _uiState.value
+        if (state.secureField || state.incognitoOn || state.fieldNoSuggestions) return
+        if (text.isBlank()) return
+        val store = com.wasimaster.wmkeyboard.core.history.TypingHistory.shared(applicationContext)
+        if (!store.enabled) return
+        val app = currentPackage
+        serviceScope.launch(Dispatchers.IO) {
+            store.record(text, app, System.currentTimeMillis())
+        }
+    }
+
     private fun learn(
         word: String,
         reinforcement: Int = 1,
@@ -21675,6 +21696,10 @@ open class WMKeyboardService : InputMethodService() {
         }
         // The pattern gate follows what went into the field, not what the
         // lexicon was allowed to keep, so it is fed on both paths.
+        // The phone's own record of what was typed (#1073), written before the
+        // lexicon decides anything: a word the dictionary refused is still a
+        // word the user typed.
+        noteTypedHistory(word)
         for (part in parts) pushRecentWord(part)
         noteRecentWords(parts)
         scheduleRecentBar()
@@ -23847,6 +23872,7 @@ open class WMKeyboardService : InputMethodService() {
         val reading = composing.toString()
         if (learningAllowed) _uiState.value.composer.learnConversion(reading, written)
         ic.commitText(written, 1)
+        noteTypedHistory(written)
         CjkContext.committed(written)
         rememberConversion(written, reading)
         consumeShift()

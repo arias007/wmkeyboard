@@ -939,4 +939,10 @@
     <string name="backup_proton_captcha">Proton wants to check that you are a person. Sign in once on proton.me in a browser on this network, then try again here.</string>
     <string name="backup_proton_info">Proton Drive encrypts every file on this phone, as the Proton apps do. Proton has no public interface for apps like this one yet, so Proton can change it, and backups can then stop until the app is updated. The app keeps the sign-in session and your key password in a protected form, not your password.</string>
     <string name="backup_auto_error_unsafe_proton">Proton did not prove that it knows your password. The sign-in stopped, because a device between you and Proton can cause this.</string>
+    <string name="backup_section_typing_history_label">Typing history</string>
+    <string name="backup_section_typing_history_label_lowercase">typing history</string>
+    <plurals name="backup_section_typing_history_count">
+        <item quantity="one">%1$d entry</item>
+        <item quantity="other">%1$d entries</item>
+    </plurals>
 </resources>

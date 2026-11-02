@@ -30,6 +30,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import com.wasimaster.wmkeyboard.core.history.TypingHistory
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import com.wasimaster.wmkeyboard.R
@@ -270,6 +271,7 @@ private fun VerifyChecksumsRow(repository: SettingsRepository, settings: LiveSet
             },
         )
     }
+    TypingHistoryGroup()
 }
 
 // ---- voice typing ----
@@ -663,6 +665,66 @@ internal fun VoiceServerSettings(repository: SettingsRepository, settings: LiveS
         }
     }
     VoiceServerLanguages(repository, settings)
+}
+
+// ---- typing history ----
+
+/**
+ * The typing history (#1073): a local record of what was committed to the
+ * field, off until it is asked for, and never in sync.
+ *
+ * Its switch is a `ToggleSetting` that opens a dialog rather than flipping: the
+ * one thing this feature can do that the others cannot is keep a sentence the
+ * user would rather forget, and the dialog is where that is said plainly —
+ * including what it cannot promise, which is a field that never declared
+ * itself a password.
+ */
+@Composable
+private fun TypingHistoryGroup() {
+    val context = LocalContext.current
+    val store = remember { TypingHistory.shared(context) }
+    var on by remember { mutableStateOf(store.enabled) }
+    var confirming by remember { mutableStateOf(false) }
+    Spacer(Modifier.height(12.dp))
+    SettingsGroup(stringResource(R.string.privacy_typing_history_group)) {
+        item {
+            ToggleSetting(
+                R.string.privacy_typing_history_title,
+                stringResource(
+                    if (on) R.string.privacy_typing_history_subtitle_on
+                    else R.string.privacy_typing_history_subtitle_off,
+                ),
+                on,
+                info = stringResource(R.string.privacy_typing_history_info),
+            ) { want ->
+                if (want) {
+                    confirming = true
+                } else {
+                    store.setEnabled(false)
+                    on = false
+                }
+            }
+        }
+    }
+    if (confirming) {
+        AlertDialog(
+            onDismissRequest = { confirming = false },
+            title = { Text(stringResource(R.string.privacy_typing_history_confirm_title)) },
+            text = { Text(stringResource(R.string.privacy_typing_history_confirm_body)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    confirming = false
+                    store.setEnabled(true)
+                    on = true
+                }) { Text(stringResource(CommonR.string.common_enable)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { confirming = false }) {
+                    Text(stringResource(CommonR.string.common_cancel))
+                }
+            },
+        )
+    }
 }
 
 // ---- clipboard ----
